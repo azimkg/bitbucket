@@ -8,7 +8,7 @@
                 data-target="#createUser"
                 style="margin-top: 20px; margin-left: 20px"
             >
-                Add New User
+                Проверить домен
             </button>
             <div class="card-body">
                 <table class="table table-bordered">
