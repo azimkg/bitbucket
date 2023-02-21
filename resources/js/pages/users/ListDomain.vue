@@ -98,7 +98,7 @@
                         Назад
                     </button>
                     <button
-                        @click="postUser"
+                        @click="postDomain"
                         type="button"
                         class="btn btn-primary"
                     >
@@ -129,7 +129,7 @@ const form = reactive({
     title: "",
 });
 
-function postUser() {
+function postDomain() {
     let regexp = /[а-яё]/i;
     if (regexp.test(form.title)) {
         return alert("Введите латинские символы!");
