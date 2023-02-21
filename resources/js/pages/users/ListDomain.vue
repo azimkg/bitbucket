@@ -101,6 +101,7 @@
                         @click="postDomain"
                         type="button"
                         class="btn btn-primary"
+                        :disabled="!form.title"
                     >
                         Проверить
                     </button>
