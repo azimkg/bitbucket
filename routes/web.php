@@ -21,8 +21,6 @@ Route::get('/', function () {
 });
 
 Route::post('/api/checked', [DomainController::class, 'store']);
-Route::get('/api/domains', [DomainController::class, 'index']);
-
 
 
 Route::get(
