@@ -10,20 +10,15 @@ use Iodev\Whois\Factory;
 
 class DomainController extends Controller
 {
-    public function index()
-    {
-        $users = Factory::get();
-        return $users;
-    }
 
     public function store()
     {
-
+        //Вылавливание данных из клиента
         $whois = Factory::get()->createWhois();
         $domains = request('title');
         $backArray = [];
         $parserData = explode(",", $domains);
-
+        //Функция валидации
         function isValidArr($elem)
         {
             return (preg_match('/^[a-z\d][a-z\d-]{0,62}$/i', $elem) &&
