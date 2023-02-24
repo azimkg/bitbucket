@@ -12,10 +12,12 @@ class DomainController extends Controller
 
     public function store()
     {
-
+        //Вылавливание данных из клиента
         $whois = Factory::get()->createWhois();
         // Отлавливание данных из клиента
         $domains = request()->all(); // приходит массив 
+
+        // Массив для собирания проверенных данных
         $backArray = [];
 
         // Функция для валидации данных на домен
