@@ -2,8 +2,8 @@ import ListDomain from "./pages/users/ListDomain.vue";
 
 export default [
     {
-        path: "/admin/check",
-        name: "admin.check",
+        path: "/",
+        name: "",
         component: ListDomain,
     },
 ];

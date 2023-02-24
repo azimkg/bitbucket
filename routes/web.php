@@ -16,16 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::post('/api/checked', [DomainController::class, 'store']);
-Route::get('/api/domains', [DomainController::class, 'index']);
-
-
-
 Route::get(
     '{view}',
     MainController::class
 )->where('view', '(.*)');
+
+Route::post('/api/checked', [DomainController::class, 'store']);

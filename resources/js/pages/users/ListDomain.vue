@@ -8,7 +8,7 @@
                 data-target="#createUser"
                 style="margin-top: 20px; margin-left: 20px"
             >
-                Add New User
+                Проверить домен
             </button>
             <div class="card-body">
                 <table class="table table-bordered">
@@ -62,7 +62,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">
-                        Проверить домен
+                        Проверка домена
                     </h5>
                     <button
                         type="button"
@@ -73,23 +73,25 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" v-show="isVisible === true">
                     <h6>Проверка займет меньше минуты...</h6>
+                </div>
+                <div class="modal-body" v-show="isVisible === false">
                     <form autocomplete="off">
                         <div class="form-group">
-                            <label for="name">Domains</label>
+                            <label for="name">Домен</label>
                             <textarea
                                 v-model="form.title"
                                 type="text"
                                 class="form-control"
                                 id="name"
                                 aria-describedby="nameHelp"
-                                placeholder="Enter domains"
+                                placeholder="Введите домен"
                             />
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" v-show="isVisible === false">
                     <button
                         type="button"
                         class="btn btn-secondary"
@@ -98,7 +100,7 @@
                         Назад
                     </button>
                     <button
-                        @click="postUser"
+                        @click="checkDomain"
                         type="button"
                         class="btn btn-primary"
                     >
@@ -111,36 +113,45 @@
 </template>
 
 <script setup>
-import { ref, unref, reactive } from "vue";
+import { shallowReactive, ref } from "vue";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
 
-let domains = [];
+let domains = ref([]);
+let isVisible = false;
 
-function getDomdain(item) {
-    if (typeof item === "string") {
-        domains.push(item);
-    } else {
-        domains.push(...item);
-    }
-}
-
-const form = reactive({
+const form = shallowReactive({
     title: "",
 });
 
-function postUser() {
-    let regexp = /[а-яё]/i;
-    if (regexp.test(form.title)) {
+function isVisibled() {
+    setTimeout(() => {
+        isVisible = false;
+    });
+}
+
+// Отправка каждого элемента введенных доменов
+// Один домен - один запрос
+function checkDomain() {
+    let regeByRussian = /[а-яё]/i;
+    if (regeByRussian.test(form.title)) {
         return alert("Введите латинские символы!");
     }
     try {
-        axios.post("/api/checked", form).then((res) => {
-            domains = [];
-            getDomdain(res.data);
-            form.title = "";
-            $("#createUser").modal("hide");
-        });
+        // Приводим данные в нужный нам формат
+        form.title
+            .toLowerCase()
+            .split(",")
+            ?.forEach((title) => {
+                axios.post("/api/checked", title).then((res) => {
+                    let arr = res.data?.map((elem) => {
+                        domains.value.push(elem);
+                    });
+                    $("#createUser").modal("hide");
+                });
+                form.title = "";
+                isVisible = true;
+                isVisibled();
+            });
     } catch (error) {
         console.log(error);
     }

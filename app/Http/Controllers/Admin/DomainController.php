@@ -3,47 +3,44 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Iodev\Whois\Factory;
 
 
 class DomainController extends Controller
 {
-    public function index()
-    {
-        $users = Factory::get();
-        return $users;
-    }
 
     public function store()
     {
 
         $whois = Factory::get()->createWhois();
-        $domains = request('title');
+        // Отлавливание данных из клиента
+        $domains = request()->all(); // приходит массив 
         $backArray = [];
-        $parserData = explode(",", $domains);
 
+        // Функция для валидации данных на домен
         function isValidArr($elem)
         {
             return (preg_match('/^[a-z\d][a-z\d-]{0,62}$/i', $elem) &&
                 !preg_match('/-$/', $elem));
         };
 
-        foreach ($parserData as $arr) {
-
-            $arr = trim($arr);
-            $isAvailable = $whois->isDomainAvailable($arr);
-            if (isValidArr($arr)) {
-                return print "$arr не валидный домен!";
+        // Перебор массива, так как ключи массива являются даныыми из клиента, мы перебрали и проводили манипуляции над ключами
+        foreach ($domains as $key => $arr) {
+            $key = str_replace('_', '.', $key);
+            // Проверка домена на 
+            $isAvailable = $whois->isDomainAvailable($key);
+            if (isValidArr($key)) {
+                return print "$key не валидный домен!";
             }
             $backArray[] = [
-                'domain' => $arr,
+                'domain' => $key,
                 'isAvailable' => $isAvailable,
-                'expirationDate' => $isAvailable ?  null : date("d.m.Y H:i:s", $whois->loadDomainInfo($arr)->expirationDate),
+                'expirationDate' => $isAvailable ?  null : date("d.m.Y H:i:s", $whois->loadDomainInfo($key)->expirationDate),
             ];
         };
 
+        // Возвращаем массив с проверенными данными 
         return $backArray;
     }
 }
