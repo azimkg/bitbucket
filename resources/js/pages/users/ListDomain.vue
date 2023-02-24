@@ -128,6 +128,7 @@ function isVisibled() {
     setTimeout(() => {
         isVisible = false;
     });
+    console.log(domains);
 }
 
 // Отправка каждого элемента введенных доменов
@@ -144,10 +145,15 @@ function checkDomain() {
             .split(",")
             ?.forEach((title) => {
                 axios.post("/api/checked", title).then((res) => {
-                    let arr = res.data?.map((elem) => {
-                        domains.value.push(elem);
-                    });
-                    $("#createUser").modal("hide");
+                    if (typeof res.data === "string") {
+                        domains.value.push(res.data);
+                        $("#createUser").modal("hide");
+                    } else {
+                        let arr = res.data?.map((elem) => {
+                            domains.value.push(elem);
+                        });
+                        $("#createUser").modal("hide");
+                    }
                 });
                 form.title = "";
                 isVisible = true;
